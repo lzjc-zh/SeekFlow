@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SeekFlow</string>
+    <string name="app_name">DeepSeek仪表盘</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Genel Bakış</string>
@@ -60,7 +60,7 @@
     <string name="trend_title">30 Günlük Trend</string>
     <string name="trend_total">Toplam ¥%s</string>
     <string name="trend_daily_avg">Ort. ¥%s</string>
-    <string name="trend_peak">Zirve %s ¥%s</string>
+    <string name="trend_peak">Zirve %1$s ¥%2$s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Model Dağılımı</string>

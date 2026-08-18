@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SeekFlow</string>
+    <string name="app_name">DeepSeek仪表盘</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">概览</string>
@@ -10,7 +10,7 @@
 
     <!-- Dashboard -->
     <string name="loading_refreshing">正在刷新数据</string>
-    <string name="empty_dashboard_desc">请先在设置中填写 DeepSeek API Key，之后即可查看余额与消耗趋势。</string>
+    <string name="empty_dashboard_desc">请先在设置中添加大模型供应商（DeepSeek、OpenAI、中转站等），之后即可查看余额与消耗趋势。</string>
     <string name="go_to_settings">前往设置</string>
 
     <!-- Analytics -->
@@ -24,16 +24,40 @@
     <string name="label_user_token">User Token（查询用量）</string>
     <string name="label_threshold">阈值 (¥)</string>
     <string name="threshold_hint">例如 10</string>
-    <string name="threshold_desc">当余额低于设定阈值时，通过通知提醒你。留空则不提醒。</string>
+    <string name="threshold_desc">当合计余额低于设定阈值时，通过通知提醒你。留空则不提醒。</string>
     <string name="btn_save">保存</string>
+    <string name="btn_cancel">取消</string>
+    <string name="btn_edit">编辑</string>
+    <string name="btn_delete">删除</string>
     <string name="title_usage">使用说明</string>
     <string name="usage_text">API Key 用于查询账户余额，可在 platform.deepseek.com/api_keys 创建或复制。\n\nUser Token 用于查询每日用量明细。登录 platform.deepseek.com 后打开浏览器开发者工具，在 Console 中执行：\n\nlocalStorage.getItem(\'userToken\')\n\n复制返回值并粘贴到上方输入框。</string>
+    <string name="usage_text_multi">点击「添加」可以接入多家大模型供应商：\n\n· DeepSeek 官方：填写 API Key 可查余额；额外填写 User Token（登录 platform.deepseek.com 后在浏览器 Console 执行 localStorage.getItem(\'userToken\') 获取）可查询每日用量明细。\n\n· OpenAI 兼容 / 中转站：填写任意兼容 OpenAI 格式的端点。New-API / One-API 搭建的中转站会自动读取令牌余额；OpenAI 官方账号会尝试读取订阅额度。若供应商不提供余额接口，余额显示为 0，你仍可在「分析」页查看趋势。\n\n· 聊天 Tab 顶部可切换供应商进行对话。</string>
     <string name="title_language">语言</string>
     <string name="btn_show">显示</string>
     <string name="btn_hide">隐藏</string>
 
+    <!-- Providers -->
+    <string name="providers_title">供应商</string>
+    <string name="providers_empty">尚未添加供应商。点击右上角「添加」接入 DeepSeek、OpenAI 或任意中转站。</string>
+    <string name="provider_add">添加</string>
+    <string name="provider_edit">编辑供应商</string>
+    <string name="provider_type_deepseek">DeepSeek 官方</string>
+    <string name="provider_type_compatible">OpenAI 兼容</string>
+    <string name="provider_enabled">已启用</string>
+    <string name="provider_disabled">已停用</string>
+    <string name="provider_delete_confirm_title">删除供应商</string>
+    <string name="provider_delete_confirm_text">确定删除「%s」吗？该供应商的历史用量记录将保留，但不再刷新。</string>
+    <string name="provider_field_name">名称</string>
+    <string name="provider_field_type">类型</string>
+    <string name="provider_field_base_url">Base URL</string>
+    <string name="provider_field_api_key">API Key</string>
+    <string name="provider_field_user_token">User Token（用量明细，可选）</string>
+    <string name="provider_field_chat_model">聊天模型（可选）</string>
+    <string name="provider_save_error">名称与 API Key 不能为空</string>
+    <string name="provider_save_error_url">Base URL 不能为空，且必须以 http:// 或 https:// 开头</string>
+
     <!-- Balance Card -->
-    <string name="balance_title">账户余额</string>
+    <string name="balance_title">合计余额</string>
     <string name="balance_available">可用</string>
     <string name="balance_daily">当日消耗</string>
     <string name="balance_monthly">本月消耗</string>
@@ -41,7 +65,8 @@
     <!-- Chat -->
     <string name="chat_send">发送</string>
     <string name="chat_empty_title">开始聊天</string>
-    <string name="chat_empty_desc">请先在设置中填写 DeepSeek API Key，之后即可与 DeepSeek 对话。</string>
+    <string name="chat_empty_desc">请先在设置中添加供应商并填写 API Key，之后即可进行对话。</string>
+    <string name="chat_input_hint">输入消息...</string>
 
     <!-- Daily Bar Chart -->
     <string name="chart_consumption_trend">消耗趋势</string>
@@ -60,7 +85,7 @@
     <string name="trend_title">30天趋势</string>
     <string name="trend_total">合计 ¥%s</string>
     <string name="trend_daily_avg">日均 ¥%s</string>
-    <string name="trend_peak">峰值 %s ¥%s</string>
+    <string name="trend_peak">峰值 %1$s ¥%2$s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">模型占比</string>

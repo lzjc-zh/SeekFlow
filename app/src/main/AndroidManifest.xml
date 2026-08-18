@@ -12,11 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.DeepseekBalance">
+        android:theme="@style/Theme.SeekFlow">
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.DeepseekBalance">
+            android:theme="@style/Theme.SeekFlow">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

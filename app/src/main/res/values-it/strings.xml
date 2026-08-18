@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SeekFlow</string>
+    <string name="app_name">DeepSeek仪表盘</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Riepilogo</string>
@@ -60,7 +60,7 @@
     <string name="trend_title">Andamento 30 giorni</string>
     <string name="trend_total">Totale ¥%s</string>
     <string name="trend_daily_avg">Media ¥%s</string>
-    <string name="trend_peak">Picco %s ¥%s</string>
+    <string name="trend_peak">Picco %1$s ¥%2$s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Distribuzione modelli</string>

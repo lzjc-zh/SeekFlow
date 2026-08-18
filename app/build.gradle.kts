@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    namespace = "com.deepseek.balance"
+    namespace = "com.deepseek.lzjc"
 
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "com.deepseek.balance"
+        applicationId = "com.deepseek.lzjc"
         minSdk = 26
         targetSdk = 35
         versionCode = 3

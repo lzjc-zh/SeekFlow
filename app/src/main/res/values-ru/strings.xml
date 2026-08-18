@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SeekFlow</string>
+    <string name="app_name">DeepSeek仪表盘</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Обзор</string>
@@ -60,7 +60,7 @@
     <string name="trend_title">Тренд за 30 дней</string>
     <string name="trend_total">Итого ¥%s</string>
     <string name="trend_daily_avg">В среднем ¥%s</string>
-    <string name="trend_peak">Пик %s ¥%s</string>
+    <string name="trend_peak">Пик %1$s ¥%2$s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Распределение по моделям</string>

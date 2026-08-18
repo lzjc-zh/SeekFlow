@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">SeekFlow</string>
+    <string name="app_name">DeepSeek仪表盘</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">概覽</string>
@@ -60,7 +60,7 @@
     <string name="trend_title">30天趨勢</string>
     <string name="trend_total">合計 ¥%s</string>
     <string name="trend_daily_avg">日均 ¥%s</string>
-    <string name="trend_peak">峰值 %s ¥%s</string>
+    <string name="trend_peak">峰值 %1$s ¥%2$s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">模型佔比</string>
