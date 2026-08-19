@@ -28,25 +28,6 @@ jobs:
           sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
           yes | sdkmanager --licenses || true
 
-      - name: Debug Info
-        run: |
-          echo "=== Java ==="
-          java -version
-          echo "=== ANDROID_HOME ==="
-          echo "$ANDROID_HOME"
-          echo "=== SDK platforms ==="
-          ls "$ANDROID_HOME/platforms/" 2>/dev/null || echo "no platforms dir"
-          echo "=== Gradle files ==="
-          ls -la gradlew gradle/wrapper/
-          echo "=== build.gradle.kts (root) ==="
-          cat build.gradle.kts
-          echo "=== build.gradle.kts (app) ==="
-          cat app/build.gradle.kts
-          echo "=== settings.gradle.kts ==="
-          cat settings.gradle.kts
-          echo "=== gradle.properties ==="
-          cat gradle.properties
-
       - name: Build Debug APK
         run: ./gradlew assembleDebug --no-daemon --stacktrace
 
