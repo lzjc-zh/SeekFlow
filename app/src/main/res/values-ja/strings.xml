@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -91,4 +91,11 @@
     <string name="widget_month_prefix">月 </string>
     <string name="network_error">ネットワークエラー</string>
     <string name="refresh_failed">更新に失敗しました</string>
+
+    <!-- About -->
+    <string name="about_title">について</string>
+    <string name="about_description">DeepSeekダッシュボードは、DeepSeek APIの残高と使用量を監視するためのAndroidクライアントです。</string>
+    <string name="about_original_author">原作者：</string>
+    <string name="about_source_code">ソースコード：</string>
+    <string name="about_license">MITライセンスの下でオープンソース</string>
 </resources>

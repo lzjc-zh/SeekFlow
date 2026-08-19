@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -93,4 +93,11 @@
     <!-- Errors -->
     <string name="network_error">Ağ hatası</string>
     <string name="refresh_failed">Yenileme başarısız</string>
+
+    <!-- About -->
+    <string name="about_title">Hakkında</string>
+    <string name="about_description">DeepSeek Dashboard, DeepSeek API bakiyesini ve kullanımını izlemek için bir Android istemcisidir.</string>
+    <string name="about_original_author">Orijinal yazar: </string>
+    <string name="about_source_code">Kaynak kodu: </string>
+    <string name="about_license">MIT lisansı altında açık kaynak</string>
 </resources>

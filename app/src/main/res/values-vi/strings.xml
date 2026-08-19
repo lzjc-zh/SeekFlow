@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -93,4 +93,11 @@
     <!-- Errors -->
     <string name="network_error">Lỗi mạng</string>
     <string name="refresh_failed">Làm mới thất bại</string>
+
+    <!-- About -->
+    <string name="about_title">Giới thiệu</string>
+    <string name="about_description">DeepSeek Dashboard à ứng dụng Android để theo dõi số dò và sử dụng API DeepSeek.</string>
+    <string name="about_original_author">Tác giả gốc: </string>
+    <string name="about_source_code">Mã nguồn: </string>
+    <string name="about_license">Mã nguồn mở theo giấy phép MIT</string>
 </resources>

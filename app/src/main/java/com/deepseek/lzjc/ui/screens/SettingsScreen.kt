@@ -3,6 +3,7 @@ package com.deepseek.lzjc.ui.screens
 import android.app.Activity
 import android.content.Context
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -41,8 +42,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
@@ -104,6 +109,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val focusManager = LocalFocusManager.current
+    val uriHandler = LocalUriHandler.current
     val accent = Color(0xFF4D6BFE)
 
     var showKey by remember { mutableStateOf(false) }
@@ -287,6 +293,48 @@ fun SettingsScreen(
                     }
                 }
             }
+        }
+
+        SettingsPanel {
+            Text(
+                stringResource(R.string.about_title),
+                color = Color(0xFF1A1A1A),
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(Modifier.height(10.dp))
+            Text(
+                stringResource(R.string.about_description),
+                color = Color(0xFF666666),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.height(8.dp))
+            Text(
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.about_original_author))
+                    withStyle(SpanStyle(color = accent)) { append("DavidBlon") }
+                },
+                color = Color(0xFF666666),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.about_source_code))
+                    withStyle(SpanStyle(color = accent)) { append("GitHub") }
+                },
+                color = Color(0xFF666666),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.clickable {
+                    uriHandler.openUri("https://github.com/DavidBlon/SeekFlow")
+                }
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
+                stringResource(R.string.about_license),
+                color = Color(0xFF999999),
+                style = MaterialTheme.typography.bodySmall
+            )
         }
     }
 }

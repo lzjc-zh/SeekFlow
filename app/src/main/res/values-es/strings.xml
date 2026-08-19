@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -91,4 +91,11 @@
     <string name="widget_month_prefix">M </string>
     <string name="network_error">Error de red</string>
     <string name="refresh_failed">Error al actualizar</string>
+
+    <!-- About -->
+    <string name="about_title">Acerca de</string>
+    <string name="about_description">DeepSeek Dashboard es un cliente Android para monitorear el saldo y uso de la API de DeepSeek.</string>
+    <string name="about_original_author">Autor original: </string>
+    <string name="about_source_code">Código fuente: </string>
+    <string name="about_license">Código abierto bajo licencia MIT</string>
 </resources>

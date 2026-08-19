@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -93,4 +93,11 @@
     <!-- Errors -->
     <string name="network_error">Ошибка сети</string>
     <string name="refresh_failed">Ошибка обновления</string>
+
+    <!-- About -->
+    <string name="about_title">О приложении</string>
+    <string name="about_description">DeepSeek Dashboard — Android-клиент для мониторинга баланса и использования API DeepSeek.</string>
+    <string name="about_original_author">Автор: </string>
+    <string name="about_source_code">Исходный код: </string>
+    <string name="about_license">Открытый исходный код под лицензией MIT</string>
 </resources>

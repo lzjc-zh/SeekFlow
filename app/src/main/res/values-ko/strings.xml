@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -91,4 +91,11 @@
     <string name="widget_month_prefix">월 </string>
     <string name="network_error">네트워크 오류</string>
     <string name="refresh_failed">새로고침 실패</string>
+
+    <!-- About -->
+    <string name="about_title">정보</string>
+    <string name="about_description">DeepSeek 대시보드는 DeepSeek API 잔액 및 사용량을 모니터링하기 위한 Android 클라이언트입니다.</string>
+    <string name="about_original_author">원저자: </string>
+    <string name="about_source_code">소스 코드: </string>
+    <string name="about_license">MIT 라이선스 아래 오픈 소스</string>
 </resources>

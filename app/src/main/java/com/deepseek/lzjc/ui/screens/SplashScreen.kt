@@ -36,14 +36,15 @@ fun SplashScreen(
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.ic_seekflow_logo),
-                contentDescription = "SeekFlow Logo",
+                contentDescription = "DeepSeek Logo",
                 modifier = Modifier.size(200.dp)
             )
             Text(
                 modifier = Modifier.offset(y = (-20).dp),
                 text = buildAnnotatedString {
-                    withStyle(SpanStyle(color = Color(0xFF4D6BFE))) { append("Seek") }
-                    withStyle(SpanStyle(color = Color(0xFF000000))) { append("Flow") }
+                    withStyle(SpanStyle(color = Color(0xFF4D6BFE))) { append("Deep") }
+                    withStyle(SpanStyle(color = Color(0xFF000000))) { append("Seek") }
+                    withStyle(SpanStyle(color = Color(0xFF666666))) { append(" 仪表盘") }
                 },
                 style = MaterialTheme.typography.headlineMedium,
                 fontWeight = FontWeight.Bold

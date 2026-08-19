@@ -91,4 +91,11 @@
     <string name="widget_month_prefix">月 </string>
     <string name="network_error">网络错误</string>
     <string name="refresh_failed">刷新失败</string>
+
+    <!-- About -->
+    <string name="about_title">关于</string>
+    <string name="about_description">DeepSeek仪表盘 是一个用于监控 DeepSeek API 余额和用量的 Android 客户端。</string>
+    <string name="about_original_author">原作者：</string>
+    <string name="about_source_code">开源地址：</string>
+    <string name="about_license">基于 MIT 协议开源</string>
 </resources>

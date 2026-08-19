@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">SeekFlow</string>
 
@@ -91,4 +91,11 @@
     <string name="widget_month_prefix">月 </string>
     <string name="network_error">網路錯誤</string>
     <string name="refresh_failed">重新整理失敗</string>
+
+    <!-- About -->
+    <string name="about_title">關於</string>
+    <string name="about_description">DeepSeek儀錶盤 是一個用於監控 DeepSeek API 餘額和用量、的 Android 客戶端。</string>
+    <string name="about_original_author">原作者：</string>
+    <string name="about_source_code">開源地址：</string>
+    <string name="about_license">基於 MIT 協議開源</string>
 </resources>
