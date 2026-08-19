@@ -6,9 +6,9 @@ import com.google.gson.annotations.SerializedName
 
 /** 平台 API 统一响应外层 */
 data class PlatformResponse<T>(
-    val code: Int,
-    val msg: String,
-    val data: PlatformData<T>?
+    @SerializedName("code") val code: Int,
+    @SerializedName("msg") val msg: String,
+    @SerializedName("data") val data: PlatformData<T>?
 )
 
 data class PlatformData<T>(
@@ -31,59 +31,59 @@ data class UserSummary(
 )
 
 data class WalletInfo(
-    val currency: String,
-    val balance: String,
+    @SerializedName("currency") val currency: String,
+    @SerializedName("balance") val balance: String,
     @SerializedName("token_estimation") val tokenEstimation: String
 )
 
 data class MonthlyCost(
-    val currency: String,
-    val amount: String
+    @SerializedName("currency") val currency: String,
+    @SerializedName("amount") val amount: String
 )
 
 // ===== 用量统计 (usage/amount) =====
 
 data class UsageAmountData(
-    val total: List<ModelUsage>,
-    val days: List<DailyUsage>
+    @SerializedName("total") val total: List<ModelUsage>,
+    @SerializedName("days") val days: List<DailyUsage>
 )
 
 data class ModelUsage(
-    val model: String,
-    val usage: List<UsageItem>
+    @SerializedName("model") val model: String,
+    @SerializedName("usage") val usage: List<UsageItem>
 )
 
 data class UsageItem(
-    val type: String,
-    val amount: String
+    @SerializedName("type") val type: String,
+    @SerializedName("amount") val amount: String
 )
 
 data class DailyUsage(
-    val date: String,
-    val data: List<ModelUsage>
+    @SerializedName("date") val date: String,
+    @SerializedName("data") val data: List<ModelUsage>
 )
 
 // ===== 费用统计 (usage/cost) =====
 
 data class UsageCostData(
-    val total: List<ModelUsage>,
-    val days: List<DailyUsage>,
-    val currency: String
+    @SerializedName("total") val total: List<ModelUsage>,
+    @SerializedName("days") val days: List<DailyUsage>,
+    @SerializedName("currency") val currency: String
 )
 
 // ===== 聚合后的展示数据 =====
 
 /** 每日汇总（token + 费用） */
 data class DailySummary(
-    val date: String,
-    val totalTokens: Long,
-    val totalCost: Double,
-    val modelTokens: Map<String, Long>  // model -> tokens
+    @SerializedName("date") val date: String,
+    @SerializedName("totalTokens") val totalTokens: Long,
+    @SerializedName("totalCost") val totalCost: Double,
+    @SerializedName("modelTokens") val modelTokens: Map<String, Long>
 )
 
 /** 模型汇总 */
 data class ModelSummary(
-    val model: String,
-    val totalTokens: Long,
-    val totalCost: Double
+    @SerializedName("model") val model: String,
+    @SerializedName("totalTokens") val totalTokens: Long,
+    @SerializedName("totalCost") val totalCost: Double
 )

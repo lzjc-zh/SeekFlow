@@ -1,0 +1,20 @@
+e: file:///E:/MiniMax/.minimax-agent-cn/projects/SeekFlow-fork/app/src/main/java/com/deepseek/lzjc/ui/screens/SettingsScreen.kt:98:23 Unresolved reference 'providers'.
+e: file:///E:/MiniMax/.minimax-agent-cn/projects/SeekFlow-fork/app/src/main/java/com/deepseek/lzjc/ui/screens/SettingsScreen.kt:98:62 Unresolved reference 'it'.
+e: file:///E:/MiniMax/.minimax-agent-cn/projects/SeekFlow-fork/app/src/main/java/com/deepseek/lzjc/ui/screens/SettingsScreen.kt:153:23 Unresolved reference 'saveProvider'.
+e: file:///E:/MiniMax/.minimax-agent-cn/projects/SeekFlow-fork/app/src/main/java/com/deepseek/lzjc/ui/screens/SettingsScreen.kt:166:23 Unresolved reference 'deleteProvider'.
+e: file:///E:/MiniMax/.minimax-agent-cn/projects/SeekFlow-fork/app/src/main/java/com/deepseek/lzjc/ui/screens/SettingsScreen.kt:177:23 Unresolved reference 'saveProvider'.
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':app:compileReleaseKotlin'.
+> A failure occurred while executing org.jetbrains.kotlin.compilerRunner.GradleCompilerRunnerWithWorkers$GradleKotlinCompilerWorkAction
+   > Compilation error. See log for more details
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+BUILD FAILED in 7s

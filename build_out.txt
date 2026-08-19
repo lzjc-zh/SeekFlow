@@ -1,0 +1,57 @@
+> Task :app:buildKotlinToolingMetadata UP-TO-DATE
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:preBuild UP-TO-DATE
+> Task :app:preReleaseBuild UP-TO-DATE
+> Task :app:checkReleaseAarMetadata UP-TO-DATE
+> Task :app:generateReleaseResValues UP-TO-DATE
+> Task :app:mapReleaseSourceSetPaths
+> Task :app:generateReleaseResources
+> Task :app:packageReleaseResources
+> Task :app:createReleaseCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksRelease UP-TO-DATE
+> Task :app:processReleaseMainManifest UP-TO-DATE
+> Task :app:processReleaseManifest UP-TO-DATE
+> Task :app:processReleaseManifestForPackage UP-TO-DATE
+> Task :app:parseReleaseLocalResources
+> Task :app:javaPreCompileRelease UP-TO-DATE
+> Task :app:extractProguardFiles UP-TO-DATE
+> Task :app:mergeReleaseJniLibFolders UP-TO-DATE
+> Task :app:mergeReleaseNativeLibs UP-TO-DATE
+> Task :app:stripReleaseDebugSymbols UP-TO-DATE
+> Task :app:extractReleaseNativeSymbolTables UP-TO-DATE
+> Task :app:mergeReleaseNativeDebugMetadata NO-SOURCE
+> Task :app:checkReleaseDuplicateClasses UP-TO-DATE
+> Task :app:mergeReleaseArtProfile UP-TO-DATE
+> Task :app:mergeReleaseStartupProfile UP-TO-DATE
+> Task :app:mergeReleaseShaders UP-TO-DATE
+> Task :app:compileReleaseShaders NO-SOURCE
+> Task :app:generateReleaseAssets UP-TO-DATE
+> Task :app:mergeReleaseAssets UP-TO-DATE
+> Task :app:compressReleaseAssets UP-TO-DATE
+> Task :app:extractReleaseVersionControlInfo UP-TO-DATE
+> Task :app:collectReleaseDependencies UP-TO-DATE
+> Task :app:sdkReleaseDependencyData UP-TO-DATE
+> Task :app:validateSigningRelease UP-TO-DATE
+> Task :app:writeReleaseAppMetadata UP-TO-DATE
+> Task :app:writeReleaseSigningConfigVersions UP-TO-DATE
+
+> Task :app:mergeReleaseResources
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-de\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-es\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-zh-rTW\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-en\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-vi\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-ru\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-it\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-tr\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-ja\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-fr\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+E:\MiniMax\.minimax-agent-cn\projects\SeekFlow-fork\app\src\main\res\values-ko\strings.xml:59:4: Multiple substitutions specified in non-positional format of string resource string/trend_peak. Did you mean to add the formatted="false" attribute?
+
+> Task :app:processReleaseResources
+> Task :app:convertLinkedResourcesToProtoRelease
+> Task :app:kspReleaseKotlin
+
+> Task :app:compileReleaseKotlin FAILED
+35 actionable tasks: 9 executed, 26 up-to-date

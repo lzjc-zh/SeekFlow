@@ -3,25 +3,25 @@ package com.deepseek.lzjc.data.api
 import com.google.gson.annotations.SerializedName
 
 data class ChatMessage(
-    val role: String,
-    val content: String
+    @SerializedName("role") val role: String,
+    @SerializedName("content") val content: String
 )
 
 data class ChatCompletionRequest(
-    val model: String,
-    val messages: List<ChatMessage>,
-    val stream: Boolean = false
+    @SerializedName("model") val model: String,
+    @SerializedName("messages") val messages: List<ChatMessage>,
+    @SerializedName("stream") val stream: Boolean = false
 )
 
 data class ChatCompletionResponse(
-    val id: String?,
-    val choices: List<Choice>,
-    val usage: Usage?
+    @SerializedName("id") val id: String?,
+    @SerializedName("choices") val choices: List<Choice>,
+    @SerializedName("usage") val usage: Usage?
 )
 
 data class Choice(
-    val index: Int,
-    val message: ChatMessage,
+    @SerializedName("index") val index: Int,
+    @SerializedName("message") val message: ChatMessage,
     @SerializedName("finish_reason") val finishReason: String?
 )
 
