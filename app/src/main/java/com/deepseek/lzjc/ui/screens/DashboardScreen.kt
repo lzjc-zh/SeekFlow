@@ -40,6 +40,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.deepseek.lzjc.R
 import com.deepseek.lzjc.ui.components.BalanceCard
 import com.deepseek.lzjc.ui.components.DailyBarChart
@@ -193,15 +194,16 @@ private fun HeaderBar(onRefresh: () -> Unit) {
         Box(contentAlignment = Alignment.Center) {
             Image(
                 painter = painterResource(R.drawable.ic_seekflow_signal),
-                contentDescription = "SeekFlow logo",
+                contentDescription = "DeepSeek logo",
                 modifier = Modifier.size(48.dp)
             )
         }
         Spacer(Modifier.width(3.dp))
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(color = Color(0xFF4D6BFE))) { append("Seek") }
-                withStyle(SpanStyle(color = Color(0xFF000000))) { append("Flow") }
+                withStyle(SpanStyle(color = Color(0xFF4D6BFE))) { append("Deep") }
+                withStyle(SpanStyle(color = Color(0xFF000000))) { append("Seek") }
+                withStyle(SpanStyle(color = Color(0xFF666666), fontSize = 14.sp)) { append(" 仪表盘") }
             },
             style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold,
@@ -295,7 +297,7 @@ private fun EmptyDashboard(onNavigateToSettings: () -> Unit) {
     ) {
         Image(
             painter = painterResource(R.drawable.ic_seekflow_signal),
-            contentDescription = "SeekFlow logo",
+            contentDescription = "DeepSeek logo",
             modifier = Modifier
                 .size(86.dp)
                 .background(Color(0xFFF0F0F5), shape = RoundedCornerShape(24.dp))
@@ -304,8 +306,9 @@ private fun EmptyDashboard(onNavigateToSettings: () -> Unit) {
         Spacer(Modifier.height(24.dp))
         Text(
             text = buildAnnotatedString {
-                withStyle(SpanStyle(color = Color(0xFF4D6BFE))) { append("Seek") }
-                withStyle(SpanStyle(color = Color(0xFF000000))) { append("Flow") }
+                withStyle(SpanStyle(color = Color(0xFF4D6BFE))) { append("Deep") }
+                withStyle(SpanStyle(color = Color(0xFF000000))) { append("Seek") }
+                withStyle(SpanStyle(color = Color(0xFF666666), fontSize = 14.sp)) { append(" 仪表盘") }
             },
             color = Color(0xFF1A1A1A),
             style = MaterialTheme.typography.headlineMedium
