@@ -331,6 +331,18 @@ fun SettingsScreen(
             )
             Spacer(Modifier.height(4.dp))
             Text(
+                text = buildAnnotatedString {
+                    append(stringResource(R.string.about_fork_repo))
+                    withStyle(SpanStyle(color = accent)) { append("GitHub") }
+                },
+                color = Color(0xFF666666),
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.clickable {
+                    uriHandler.openUri("https://github.com/lzjc-zh/SeekFlow")
+                }
+            )
+            Spacer(Modifier.height(4.dp))
+            Text(
                 stringResource(R.string.about_license),
                 color = Color(0xFF999999),
                 style = MaterialTheme.typography.bodySmall

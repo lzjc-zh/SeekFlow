@@ -100,4 +100,5 @@
     <string name="about_original_author">Autore originale: </string>
     <string name="about_source_code">Codice sorgente: </string>
     <string name="about_license">Open source sotto licenza MIT</string>
+    <string name="about_fork_repo">Questo repository: </string>
 </resources>

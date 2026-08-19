@@ -98,4 +98,5 @@
     <string name="about_original_author">原作者：</string>
     <string name="about_source_code">ソースコード：</string>
     <string name="about_license">MITライセンスの下でオープンソース</string>
+    <string name="about_fork_repo">このリポジトリ：</string>
 </resources>
