@@ -28,10 +28,23 @@ jobs:
           sdkmanager --install "platforms;android-35" "build-tools;35.0.0" "platform-tools"
           yes | sdkmanager --licenses || true
 
+      - name: Verify Gradle wrapper
+        run: |
+          echo "=== Files ===" && ls -la gradlew gradle/wrapper/
+          echo "=== gradlew version ===" && ./gradlew --version || echo "gradlew --version failed: $?"
+
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --no-daemon
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --no-daemon --stacktrace --info 2>&1 | tee build.log; EXIT_CODE=${PIPESTATUS[0]}
+          echo "::group::Last 200 lines of build log"
+          tail -200 build.log
+          echo "::endgroup::"
+          echo "Gradle exit code: $EXIT_CODE"
+          exit $EXIT_CODE
 
       - name: Upload Debug APK
+        if: success()
         uses: actions/upload-artifact@v4
         with:
           name: debug-apk
