@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeepSeek仪表盘</string>
+    <string name="app_name">SeekFlow</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Tổng Quan</string>
@@ -60,11 +60,31 @@
     <string name="trend_title">Xu Hướng 30 Ngày</string>
     <string name="trend_total">Tổng ¥%s</string>
     <string name="trend_daily_avg">TB ¥%s</string>
-    <string name="trend_peak">Đỉnh %1$s ¥%2$s</string>
+    <string name="trend_peak">Đỉnh %s ¥%s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Phân Bổ Mô Hình</string>
     <string name="pie_no_data">Không có dữ liệu tiêu dùng</string>
+
+    <!-- Cache Hit Rate Card -->
+    <string name="cache_title">Tỷ Lệ Trúng Cache</string>
+    <string name="cache_hit_tokens">Trúng</string>
+    <string name="cache_miss_tokens">Trượt</string>
+    <string name="cache_no_data">Chưa có dữ liệu cache</string>
+    <string name="cache_rate_format">%s%%</string>
+    <string name="cache_saved">Tiết kiệm ~¥%s</string>
+
+    <!-- Request Count -->
+    <string name="request_title">Yêu cầu API</string>
+    <string name="request_today">Hôm nay</string>
+    <string name="request_month">Tháng</string>
+    <string name="request_count_format">%s lần</string>
+
+    <!-- Day Model Breakdown Popup -->
+    <string name="breakdown_cache_hit">Trúng cache</string>
+    <string name="breakdown_cache_miss">Trượt cache</string>
+    <string name="breakdown_output">Đầu ra</string>
+    <string name="breakdown_requests">Yêu cầu</string>
 
     <!-- Widget -->
     <string name="widget_day_prefix">N </string>

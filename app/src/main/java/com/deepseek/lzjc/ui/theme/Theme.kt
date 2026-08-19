@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.theme
+package com.deepseek.lzjc.ui.theme
 
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable

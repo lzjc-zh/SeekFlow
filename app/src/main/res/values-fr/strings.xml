@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeepSeek仪表盘</string>
+    <string name="app_name">SeekFlow</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Aperçu</string>
@@ -60,11 +60,31 @@
     <string name="trend_title">Tendance 30 jours</string>
     <string name="trend_total">Total ¥%s</string>
     <string name="trend_daily_avg">Moy. ¥%s</string>
-    <string name="trend_peak">Pic %1$s ¥%2$s</string>
+    <string name="trend_peak">Pic %s ¥%s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Répartition par modèle</string>
     <string name="pie_no_data">Aucune donnée de consommation</string>
+
+    <!-- Cache Hit Rate Card -->
+    <string name="cache_title">Taux de cache</string>
+    <string name="cache_hit_tokens">Succès</string>
+    <string name="cache_miss_tokens">Échec</string>
+    <string name="cache_no_data">Aucune donnée de cache</string>
+    <string name="cache_rate_format">%s%%</string>
+    <string name="cache_saved">Économie ~¥%s</string>
+
+    <!-- Request Count -->
+    <string name="request_title">Requêtes API</string>
+    <string name="request_today">Aujourd\'hui</string>
+    <string name="request_month">Mois</string>
+    <string name="request_count_format">%s fois</string>
+
+    <!-- Day Model Breakdown Popup -->
+    <string name="breakdown_cache_hit">Cache Hit</string>
+    <string name="breakdown_cache_miss">Cache Miss</string>
+    <string name="breakdown_output">Sortie</string>
+    <string name="breakdown_requests">Requêtes</string>
 
     <!-- Widget -->
     <string name="widget_day_prefix">J </string>

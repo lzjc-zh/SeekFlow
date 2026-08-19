@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.screens
+package com.deepseek.lzjc.ui.screens
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animateFloat
@@ -6,8 +6,6 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -23,7 +21,6 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -58,7 +55,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.deepseek.lzjc.R
 import com.deepseek.lzjc.data.api.ChatMessage
-import com.deepseek.lzjc.data.provider.ProviderConfig
 import com.deepseek.lzjc.data.repository.ChatRepository
 import com.deepseek.lzjc.data.repository.UsageRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -66,6 +62,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -80,9 +77,7 @@ data class ChatState(
     val messages: List<UiMessage> = emptyList(),
     val isLoading: Boolean = false,
     val hasApiKey: Boolean = false,
-    val streamingMsgId: Long? = null,
-    val providers: List<ProviderConfig> = emptyList(),
-    val selectedProviderId: String? = null
+    val streamingMsgId: Long? = null
 )
 
 @HiltViewModel
@@ -97,24 +92,9 @@ class ChatViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            usageRepository.enabledProviders.collect { providers ->
-                _state.update { current ->
-                    val usable = providers.filter { it.apiKey.isNotBlank() }
-                    val selected = current.selectedProviderId?.takeIf { id ->
-                        usable.any { it.id == id }
-                    } ?: usable.firstOrNull()?.id
-                    current.copy(
-                        hasApiKey = usable.isNotEmpty(),
-                        providers = usable,
-                        selectedProviderId = selected
-                    )
-                }
-            }
+            val key = usageRepository.apiKey.first()
+            _state.update { it.copy(hasApiKey = key.isNotBlank()) }
         }
-    }
-
-    fun selectProvider(providerId: String) {
-        _state.update { it.copy(selectedProviderId = providerId) }
     }
 
     fun sendMessage(text: String) {
@@ -125,10 +105,7 @@ class ChatViewModel @Inject constructor(
 
         viewModelScope.launch {
             val apiMessages = _state.value.messages.map { ChatMessage(role = it.role, content = it.content) }
-            val result = chatRepository.sendMessage(
-                apiMessages,
-                providerId = _state.value.selectedProviderId
-            )
+            val result = chatRepository.sendMessage(apiMessages)
             result.onSuccess { reply ->
                 val msgId = nextId++
                 val aiMsg = UiMessage(id = msgId, role = reply.role, content = reply.content)
@@ -159,9 +136,6 @@ fun ChatScreen(
         isLoading = state.isLoading,
         hasApiKey = state.hasApiKey,
         streamingMsgId = state.streamingMsgId,
-        providers = state.providers,
-        selectedProviderId = state.selectedProviderId,
-        onSelectProvider = viewModel::selectProvider,
         onSend = viewModel::sendMessage,
         onFinishStreaming = viewModel::finishStreaming
     )
@@ -173,9 +147,6 @@ private fun ChatContent(
     isLoading: Boolean,
     hasApiKey: Boolean,
     streamingMsgId: Long?,
-    providers: List<ProviderConfig>,
-    selectedProviderId: String?,
-    onSelectProvider: (String) -> Unit,
     onSend: (String) -> Unit,
     onFinishStreaming: (Long) -> Unit
 ) {
@@ -191,10 +162,14 @@ private fun ChatContent(
     }
 
     LaunchedEffect(streamingMsgId) {
-        if (streamingMsgId != null) {
+        if (streamingMsgId != null && messages.isNotEmpty()) {
             while (true) {
-                listState.scrollToItem(messages.size - 1)
-                delay(30)
+                val lastIdx = messages.size - 1
+                val lastVisible = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: -1
+                if (lastVisible < lastIdx) {
+                    listState.scrollToItem(lastIdx)
+                }
+                delay(50)
             }
         }
     }
@@ -211,35 +186,6 @@ private fun ChatContent(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        // 供应商选择条（多于一个供应商时显示）
-        if (providers.size > 1) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(rememberScrollState())
-                    .padding(horizontal = 14.dp, vertical = 6.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                providers.forEach { provider ->
-                    val selected = provider.id == selectedProviderId
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(if (selected) Color(0xFF4D6BFE) else Color(0xFFF0F2F5))
-                            .clickable { onSelectProvider(provider.id) }
-                            .padding(horizontal = 14.dp, vertical = 7.dp)
-                    ) {
-                        Text(
-                            provider.name,
-                            color = if (selected) Color.White else Color(0xFF666666),
-                            fontSize = 13.sp,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-            }
-        }
-
         LazyColumn(
             state = listState,
             modifier = Modifier
@@ -431,7 +377,7 @@ private fun InputBar(
         OutlinedTextField(
             value = text,
             onValueChange = onTextChange,
-            placeholder = { Text(stringResource(R.string.chat_input_hint), color = Color(0xFF999999)) },
+            placeholder = { Text("输入消息...", color = Color(0xFF999999)) },
             modifier = Modifier.weight(1f),
             singleLine = true,
             shape = RoundedCornerShape(24.dp),

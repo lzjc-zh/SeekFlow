@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.widget
+package com.deepseek.lzjc.ui.widget
 
 import android.content.Context
 import android.content.SharedPreferences

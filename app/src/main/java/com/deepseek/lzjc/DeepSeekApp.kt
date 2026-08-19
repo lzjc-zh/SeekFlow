@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc
+package com.deepseek.lzjc
 
 import android.app.Application
 import android.content.Context

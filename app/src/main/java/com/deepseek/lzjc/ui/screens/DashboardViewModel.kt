@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.screens
+package com.deepseek.lzjc.ui.screens
 
 import android.app.Application
 import android.content.Context
@@ -8,9 +8,8 @@ import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.deepseek.lzjc.R
+import com.deepseek.lzjc.data.db.DailyModelBreakdown
 import com.deepseek.lzjc.data.db.DailyUsageSummary
-import com.deepseek.lzjc.data.provider.ProviderBalanceResult
-import com.deepseek.lzjc.data.provider.ProviderConfig
 import com.deepseek.lzjc.data.repository.UsageRepository
 import com.deepseek.lzjc.data.worker.RefreshWorker
 import com.deepseek.lzjc.ui.widget.WidgetDataCache
@@ -19,6 +18,8 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -29,25 +30,25 @@ import java.util.Locale
 import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
-/** 单个供应商的展示数据 */
-data class ProviderUiState(
-    val config: ProviderConfig,
-    val balance: String = "--",
-    val currencySymbol: String = "¥",
-    val errorMessage: String? = null
-)
-
 data class DashboardState(
     val isLoading: Boolean = true,
     val isRefreshing: Boolean = false,
     val errorMessage: String? = null,
-    /** 全部供应商余额合计（仅同币种求和，展示以 CNY 为主） */
     val totalBalance: String = "0.00",
+    val grantedBalance: String = "0.00",
+    val toppedUpBalance: String = "0.00",
     val dailyCost: String = "0.00",
     val monthlyCost: String = "0.00",
+    val flashTokens: Long = 0,
+    val proTokens: Long = 0,
     val dailyData: List<DailyUsageSummary> = emptyList(),
-    val providerStates: List<ProviderUiState> = emptyList(),
-    val hasAnyProvider: Boolean = false
+    val hasApiKey: Boolean = false,
+    val hasUserToken: Boolean = false,
+    // v2: 请求次数
+    val dailyRequests: Long = 0,
+    val monthlyRequests: Long = 0,
+    // v3: 每日每模型明细（柱状图点触弹窗）
+    val modelBreakdowns: List<DailyModelBreakdown> = emptyList()
 )
 
 @HiltViewModel
@@ -64,47 +65,26 @@ class DashboardViewModel @Inject constructor(
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
     private val monthFormat = SimpleDateFormat("yyyy-MM", Locale.getDefault())
 
-    private var scheduled = false
-
     init {
         viewModelScope.launch {
-            repository.providers.collect { providers ->
-                val usable = providers.any { it.enabled && (it.apiKey.isNotBlank() || it.userToken.isNotBlank()) }
-                _state.update {
-                    it.copy(
-                        hasAnyProvider = usable,
-                        providerStates = if (it.providerStates.isEmpty()) {
-                            providers.filter { p -> p.enabled }.map { p -> ProviderUiState(config = p) }
-                        } else {
-                            // 保留已刷新的余额数据，只同步配置变化
-                            mergeProviderStates(it.providerStates, providers.filter { p -> p.enabled })
-                        }
-                    )
+            combine(repository.apiKey, repository.userToken) { key, token -> key to token }
+                .distinctUntilChanged()
+                .collect { (key, token) ->
+                    _state.update {
+                        it.copy(hasApiKey = key.isNotBlank(), hasUserToken = token.isNotBlank())
+                    }
+                    if (key.isNotBlank()) {
+                        yield() // 让初始渲染先完成
+                        refresh()
+                        schedulePeriodicRefresh()
+                    } else {
+                        _state.update { it.copy(isLoading = false, isRefreshing = false) }
+                    }
                 }
-                if (usable) {
-                    yield()
-                    refresh()
-                    schedulePeriodicRefresh()
-                } else {
-                    _state.update { it.copy(isLoading = false, isRefreshing = false) }
-                }
-            }
-        }
-    }
-
-    private fun mergeProviderStates(
-        old: List<ProviderUiState>,
-        configs: List<ProviderConfig>
-    ): List<ProviderUiState> {
-        return configs.map { config ->
-            old.firstOrNull { it.config.id == config.id }?.copy(config = config)
-                ?: ProviderUiState(config = config)
         }
     }
 
     private fun schedulePeriodicRefresh() {
-        if (scheduled) return
-        scheduled = true
         runCatching {
             val request = PeriodicWorkRequestBuilder<RefreshWorker>(6, TimeUnit.HOURS).build()
             WorkManager.getInstance(application).enqueueUniquePeriodicWork(
@@ -120,61 +100,58 @@ class DashboardViewModel @Inject constructor(
             _state.update { it.copy(isRefreshing = true, errorMessage = null) }
 
             runCatching {
-                val results = repository.refreshAllProviders()
+                var totalBalance = _state.value.totalBalance
+                var grantedBalance = _state.value.grantedBalance
+                var toppedUpBalance = _state.value.toppedUpBalance
+                var errorMsg: String? = null
 
-                // 更新每个供应商的余额展示
-                val providerStates = _state.value.providerStates.map { ps ->
-                    val result = results[ps.config.id]
-                    when {
-                        result == null -> ps
-                        result.isSuccess -> {
-                            val balance = result.getOrNull()!!
-                            ps.copy(
-                                balance = balance.totalBalance,
-                                currencySymbol = currencySymbol(balance.currency),
-                                errorMessage = null
-                            )
-                        }
-                        else -> ps.copy(errorMessage = result.exceptionOrNull()?.message)
+                repository.refreshAndRecord()
+                    .onSuccess { response ->
+                        val info = response.balanceInfos.firstOrNull()
+                        totalBalance = info?.totalBalance ?: "0.00"
+                        grantedBalance = info?.grantedBalance ?: "0.00"
+                        toppedUpBalance = info?.toppedUpBalance ?: "0.00"
                     }
-                }
+                    .onFailure { e ->
+                        errorMsg = e.message ?: application.getString(R.string.network_error)
+                    }
 
-                // 汇总余额（仅数值求和；不同币种时以列表为准展示明细）
-                val sum = providerStates.sumOf {
-                    it.balance.toDoubleOrNull() ?: 0.0
-                }
-                val failures = providerStates.count { it.errorMessage != null }
-
-                _state.update {
-                    it.copy(
-                        totalBalance = String.format("%.2f", sum),
-                        providerStates = providerStates,
-                        errorMessage = if (failures > 0 && failures == providerStates.size) {
-                            providerStates.firstNotNullOfOrNull { s -> s.errorMessage }
-                        } else {
-                            null
-                        }
-                    )
-                }
-
-                // 聚合消耗数据（全部供应商）
                 val today = dateFormat.format(System.currentTimeMillis())
                 val month = monthFormat.format(System.currentTimeMillis())
-                val dailyCost = repository.getDailyCostAll(today)
-                val monthlyCost = repository.getMonthlyCostAll(month)
+                val dailyCost = repository.getDailyCost(today)
+                val monthlyCost = repository.getMonthlyCost(month)
+                val flashTokens = repository.getMonthlyModelTokens(UsageRepository.MODEL_FLASH, month)
+                val proTokens = repository.getMonthlyModelTokens(UsageRepository.MODEL_PRO, month)
+
+                // v2: 请求次数
+                val dailyRequests = repository.getDailyRequestCount(today)
+                val monthlyRequests = repository.getMonthlyRequestCount(month)
 
                 val cal = Calendar.getInstance()
                 cal.add(Calendar.DAY_OF_YEAR, -30)
                 val fromDate = dateFormat.format(cal.time)
-                val data = repository.getDailyUsageSinceAll(fromDate).first()
+                val data = repository.getDailyUsageSince(fromDate).first()
 
+                // v3: 每日每模型明细
+                val modelBreakdowns = repository.getDailyModelBreakdowns(7)
+
+                // 一次性更新所有状态，避免多次触发重组
                 _state.update {
                     it.copy(
                         isLoading = false,
                         isRefreshing = false,
+                        totalBalance = totalBalance,
+                        grantedBalance = grantedBalance,
+                        toppedUpBalance = toppedUpBalance,
+                        errorMessage = errorMsg,
                         dailyCost = String.format("%.2f", dailyCost),
                         monthlyCost = String.format("%.2f", monthlyCost),
-                        dailyData = data
+                        flashTokens = flashTokens,
+                        proTokens = proTokens,
+                        dailyData = data,
+                        dailyRequests = dailyRequests,
+                        monthlyRequests = monthlyRequests,
+                        modelBreakdowns = modelBreakdowns
                     )
                 }
 
@@ -185,7 +162,6 @@ class DashboardViewModel @Inject constructor(
                     monthlyCost = currentState.monthlyCost
                 )
 
-                // 阈值提醒（针对合计余额）
                 val thresholdStr = prefs.getString("balance_threshold", "") ?: ""
                 if (thresholdStr.isNotBlank()) {
                     val threshold = thresholdStr.toFloatOrNull()
@@ -207,7 +183,4 @@ class DashboardViewModel @Inject constructor(
             }
         }
     }
-
-    private fun currencySymbol(currency: String): String =
-        if (currency == "USD") "$" else "¥"
 }

@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeepSeek仪表盘</string>
+    <string name="app_name">SeekFlow</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Overview</string>
@@ -10,7 +10,7 @@
 
     <!-- Dashboard -->
     <string name="loading_refreshing">Refreshing data…</string>
-    <string name="empty_dashboard_desc">Please add your LLM providers (DeepSeek, OpenAI, relays, etc.) in Settings first, then you can view balances and usage trends.</string>
+    <string name="empty_dashboard_desc">Please enter your DeepSeek API Key in Settings first, then you can view your balance and usage trends.</string>
     <string name="go_to_settings">Go to Settings</string>
 
     <!-- Analytics -->
@@ -24,40 +24,16 @@
     <string name="label_user_token">User Token (check usage)</string>
     <string name="label_threshold">Threshold (¥)</string>
     <string name="threshold_hint">e.g. 10</string>
-    <string name="threshold_desc">Get notified when your total balance drops below the threshold. Leave empty to disable.</string>
+    <string name="threshold_desc">Get notified when your balance drops below the threshold. Leave empty to disable.</string>
     <string name="btn_save">Save</string>
-    <string name="btn_cancel">Cancel</string>
-    <string name="btn_edit">Edit</string>
-    <string name="btn_delete">Delete</string>
     <string name="title_usage">How to Use</string>
     <string name="usage_text">API Key is used to check account balance. Create or copy one at platform.deepseek.com/api_keys.\n\nUser Token is used to query daily usage details. Log in to platform.deepseek.com, open browser developer tools, and run the following in the Console:\n\nlocalStorage.getItem(\'userToken\')\n\nCopy the returned value and paste it into the input field above.</string>
-    <string name="usage_text_multi">Tap \"Add\" to connect multiple LLM providers:\n\n· DeepSeek Official: enter an API Key to check balance; optionally enter a User Token (run localStorage.getItem(\'userToken\') in the browser Console after logging into platform.deepseek.com) to fetch daily usage details.\n\n· OpenAI Compatible / Relay: enter any OpenAI-compatible endpoint. Relays built on New-API / One-API will automatically expose token balance; OpenAI official accounts will try the subscription quota API. If a provider has no balance API, the balance shows 0 and you can still view trends in Analytics.\n\n· Switch between providers at the top of the Chat tab.</string>
     <string name="title_language">Language</string>
     <string name="btn_show">Show</string>
     <string name="btn_hide">Hide</string>
 
-    <!-- Providers -->
-    <string name="providers_title">Providers</string>
-    <string name="providers_empty">No providers yet. Tap \"Add\" to connect DeepSeek, OpenAI or any relay.</string>
-    <string name="provider_add">Add</string>
-    <string name="provider_edit">Edit Provider</string>
-    <string name="provider_type_deepseek">DeepSeek Official</string>
-    <string name="provider_type_compatible">OpenAI Compatible</string>
-    <string name="provider_enabled">Enabled</string>
-    <string name="provider_disabled">Disabled</string>
-    <string name="provider_delete_confirm_title">Delete Provider</string>
-    <string name="provider_delete_confirm_text">Delete \"%s\"? Its historical usage records will be kept, but it will no longer refresh.</string>
-    <string name="provider_field_name">Name</string>
-    <string name="provider_field_type">Type</string>
-    <string name="provider_field_base_url">Base URL</string>
-    <string name="provider_field_api_key">API Key</string>
-    <string name="provider_field_user_token">User Token (usage details, optional)</string>
-    <string name="provider_field_chat_model">Chat Model (optional)</string>
-    <string name="provider_save_error">Name and API Key cannot be empty</string>
-    <string name="provider_save_error_url">Base URL cannot be empty and must start with http:// or https://</string>
-
     <!-- Balance Card -->
-    <string name="balance_title">Total Balance</string>
+    <string name="balance_title">Balance</string>
     <string name="balance_available">Available</string>
     <string name="balance_daily">Today</string>
     <string name="balance_monthly">This Month</string>
@@ -65,8 +41,7 @@
     <!-- Chat -->
     <string name="chat_send">Send</string>
     <string name="chat_empty_title">Start Chatting</string>
-    <string name="chat_empty_desc">Please add a provider with an API Key in Settings first, then you can start chatting.</string>
-    <string name="chat_input_hint">Type a message…</string>
+    <string name="chat_empty_desc">Please enter your DeepSeek API Key in Settings first, then you can chat with DeepSeek.</string>
 
     <!-- Daily Bar Chart -->
     <string name="chart_consumption_trend">Usage Trend</string>
@@ -85,11 +60,31 @@
     <string name="trend_title">30-Day Trend</string>
     <string name="trend_total">Total ¥%s</string>
     <string name="trend_daily_avg">Daily ¥%s</string>
-    <string name="trend_peak">Peak %1$s ¥%2$s</string>
+    <string name="trend_peak">Peak %s ¥%s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Model Share</string>
     <string name="pie_no_data">No usage data</string>
+
+    <!-- Cache Hit Rate Card -->
+    <string name="cache_title">Cache Hit Rate</string>
+    <string name="cache_hit_tokens">Hit</string>
+    <string name="cache_miss_tokens">Miss</string>
+    <string name="cache_no_data">No cache data yet</string>
+    <string name="cache_rate_format">%s%%</string>
+    <string name="cache_saved">Saved ~¥%s</string>
+
+    <!-- Request Count -->
+    <string name="request_title">API Requests</string>
+    <string name="request_today">Today</string>
+    <string name="request_month">Month</string>
+    <string name="request_count_format">%s times</string>
+
+    <!-- Day Model Breakdown Popup -->
+    <string name="breakdown_cache_hit">Cache Hit</string>
+    <string name="breakdown_cache_miss">Cache Miss</string>
+    <string name="breakdown_output">Output</string>
+    <string name="breakdown_requests">Requests</string>
 
     <!-- Widget -->
     <string name="widget_day_prefix">D </string>

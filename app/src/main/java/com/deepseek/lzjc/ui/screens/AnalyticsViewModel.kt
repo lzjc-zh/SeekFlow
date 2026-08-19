@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.screens
+package com.deepseek.lzjc.ui.screens
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,7 +21,14 @@ data class AnalyticsState(
     val avgDailyCost: Double = 0.0,
     val daysRemaining: Int = 0,
     val trendData: List<DailyUsageSummary> = emptyList(),
-    val modelCosts: List<ModelCostSummary> = emptyList()
+    val modelCosts: List<ModelCostSummary> = emptyList(),
+    // v2: 缓存命中率 & 请求次数
+    val cacheHitRate: Double = 0.0,
+    val cacheHitTokens: Long = 0,
+    val cacheMissTokens: Long = 0,
+    val cacheEstimatedSaved: Double = 0.0,
+    val dailyRequests: Long = 0,
+    val monthlyRequests: Long = 0
 )
 
 @HiltViewModel
@@ -46,17 +54,32 @@ class AnalyticsViewModel @Inject constructor(
             }
 
             try {
-                // 获取当前合计余额（刷新全部供应商）
-                val results = repository.refreshAllProviders()
-                val balance = results.values
-                    .mapNotNull { it.getOrNull() }
-                    .sumOf { it.totalBalance.toDoubleOrNull() ?: 0.0 }
+                // 获取当前余额
+                val balanceStr = repository.apiKey.first()
+                var balance = 0.0
+                if (balanceStr.isNotBlank()) {
+                    repository.fetchBalance().onSuccess { resp ->
+                        balance = resp.balanceInfos.firstOrNull()?.totalBalance?.toDoubleOrNull() ?: 0.0
+                    }
+                }
 
-                // 获取汇总分析数据
-                val avgDailyCost = repository.getAvgDailyCostAll(7)
+                // 获取分析数据
+                val avgDailyCost = repository.getAvgDailyCost(7)
                 val daysRemaining = if (avgDailyCost > 0.0001) (balance / avgDailyCost).toInt() else 0
-                val trendData = repository.getDailyCostListAll(30)
-                val modelCosts = repository.getModelCostsAll(30)
+                val trendData = repository.getDailyCostList(30)
+                val modelCosts = repository.getModelCosts(30)
+
+                // v2: 缓存命中率 & 请求次数
+                val cacheHitRate = repository.getMonthlyCacheHitRate()
+                val (cacheHit, cacheMiss) = repository.getMonthlyCacheTokens()
+                val dailyRequests = repository.getDailyRequestCount()
+                val monthlyRequests = repository.getMonthlyRequestCount()
+                // 估算缓存节省的金额（命中缓存的 token 按最低价格估算）
+                val cacheEstimatedSaved = if (cacheHit > 0) {
+                    // deepseek-v4-flash: 缓存命中 0.02元/百万tokens，未命中 1元/百万tokens
+                    val savedPerToken = (1.0 - 0.02) / 1_000_000.0
+                    cacheHit * savedPerToken
+                } else 0.0
 
                 hasLoaded = true
                 _state.update {
@@ -67,7 +90,13 @@ class AnalyticsViewModel @Inject constructor(
                         avgDailyCost = avgDailyCost,
                         daysRemaining = daysRemaining,
                         trendData = trendData,
-                        modelCosts = modelCosts
+                        modelCosts = modelCosts,
+                        cacheHitRate = cacheHitRate,
+                        cacheHitTokens = cacheHit,
+                        cacheMissTokens = cacheMiss,
+                        cacheEstimatedSaved = cacheEstimatedSaved,
+                        dailyRequests = dailyRequests,
+                        monthlyRequests = monthlyRequests
                     )
                 }
             } catch (e: Exception) {

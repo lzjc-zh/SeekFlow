@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.data.api
+package com.deepseek.lzjc.data.api
 
 import com.google.gson.annotations.SerializedName
 

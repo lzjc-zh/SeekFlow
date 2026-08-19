@@ -21,12 +21,11 @@ android {
 
     signingConfigs {
         create("release") {
-            // CI 环境从环境变量读取，本地从 local.properties 读取
             val ksFile = rootProject.file("release.keystore")
             storeFile = ksFile
-            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: project.findProperty("KEYSTORE_PASSWORD") as? String ?: ""
-            keyAlias = System.getenv("KEY_ALIAS") ?: project.findProperty("KEY_ALIAS") as? String ?: "seekflow"
-            keyPassword = System.getenv("KEY_PASSWORD") ?: project.findProperty("KEY_PASSWORD") as? String ?: ""
+            storePassword = System.getenv("KEYSTORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("KEY_ALIAS") ?: "seekflow"
+            keyPassword = System.getenv("KEY_PASSWORD") ?: ""
         }
     }
 

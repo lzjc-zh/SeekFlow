@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeepSeek仪表盘</string>
+    <string name="app_name">SeekFlow</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Übersicht</string>
@@ -60,11 +60,31 @@
     <string name="trend_title">30-Tage-Trend</string>
     <string name="trend_total">Gesamt ¥%s</string>
     <string name="trend_daily_avg">Ø ¥%s</string>
-    <string name="trend_peak">Spitze %1$s ¥%2$s</string>
+    <string name="trend_peak">Spitze %s ¥%s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Modellverteilung</string>
     <string name="pie_no_data">Keine Verbrauchsdaten</string>
+
+    <!-- Cache Hit Rate Card -->
+    <string name="cache_title">Cache-Trefferrate</string>
+    <string name="cache_hit_tokens">Treffer</string>
+    <string name="cache_miss_tokens">Fehltreffer</string>
+    <string name="cache_no_data">Noch keine Cache-Daten</string>
+    <string name="cache_rate_format">%s%%</string>
+    <string name="cache_saved">Ersparnis ~¥%s</string>
+
+    <!-- Request Count -->
+    <string name="request_title">API-Anfragen</string>
+    <string name="request_today">Heute</string>
+    <string name="request_month">Monat</string>
+    <string name="request_count_format">%s mal</string>
+
+    <!-- Day Model Breakdown Popup -->
+    <string name="breakdown_cache_hit">Cache-Treffer</string>
+    <string name="breakdown_cache_miss">Cache-Fehltreffer</string>
+    <string name="breakdown_output">Ausgabe</string>
+    <string name="breakdown_requests">Anfragen</string>
 
     <!-- Widget -->
     <string name="widget_day_prefix">T </string>

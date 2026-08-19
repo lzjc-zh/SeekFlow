@@ -1,21 +1,20 @@
-﻿package com.deepseek.lzjc.ui.screens
+package com.deepseek.lzjc.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -25,18 +24,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -45,12 +40,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.deepseek.lzjc.R
-import com.deepseek.lzjc.data.provider.ProviderType
 import com.deepseek.lzjc.ui.components.BalanceCard
 import com.deepseek.lzjc.ui.components.DailyBarChart
+import com.deepseek.lzjc.ui.components.DayModelBreakdownPopup
 import com.deepseek.lzjc.ui.components.GlassPanel
+import com.deepseek.lzjc.ui.components.ModelTokenRow
 import com.deepseek.lzjc.ui.components.RefreshAnimation
 
 @Composable
@@ -65,7 +60,7 @@ fun DashboardScreen(
             .fillMaxSize()
             .background(Color.White)
     ) {
-        if (!state.hasAnyProvider) {
+        if (!state.hasApiKey) {
             EmptyDashboard(onNavigateToSettings = onNavigateToSettings)
         } else {
             DashboardContent(state = state, onRefresh = { viewModel.refresh() })
@@ -73,7 +68,6 @@ fun DashboardScreen(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun DashboardContent(
     state: DashboardState,
@@ -96,138 +90,97 @@ private fun DashboardContent(
             }
         }
     } else {
-        val pullRefreshState = rememberPullToRefreshState()
+        var selectedDay by remember { mutableStateOf<String?>(null) }
 
-        PullToRefreshBox(
-            isRefreshing = state.isRefreshing,
-            onRefresh = onRefresh,
-            state = pullRefreshState,
-            indicator = {
-                val fraction = pullRefreshState.distanceFraction.coerceIn(0f, 1f)
-                var showIndicator by remember { mutableStateOf(false) }
-                var wasRefreshing by remember { mutableStateOf(false) }
-                var allowPullShow by remember { mutableStateOf(true) }
-
-                if (wasRefreshing && !state.isRefreshing) {
-                    showIndicator = false
-                    allowPullShow = false
-                }
-                if (state.isRefreshing) {
-                    showIndicator = true
-                    allowPullShow = true
-                }
-                if (!state.isRefreshing && fraction > 0f && allowPullShow && !showIndicator) {
-                    showIndicator = true
-                }
-                if (!state.isRefreshing && fraction == 0f) {
-                    showIndicator = false
-                    allowPullShow = true
-                }
-                wasRefreshing = state.isRefreshing
-
-                if (showIndicator) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 16.dp)
-                            .offset(y = -(40.dp + 16.dp) * (1f - fraction))
-                            .alpha(if (state.isRefreshing) 1f else fraction),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        RefreshAnimation(size = 40.dp, isAnimating = state.isRefreshing)
-                    }
-                }
-            },
-            modifier = Modifier.fillMaxSize()
-        ) {
-            Column(
+        Box(modifier = Modifier.fillMaxSize()) {
+            // 纯 LazyColumn，无任何嵌套滚动干扰
+            LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-                    .padding(horizontal = 14.dp, vertical = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                    .padding(horizontal = 14.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+                contentPadding = PaddingValues(vertical = 8.dp)
             ) {
-                HeaderBar(onRefresh = onRefresh)
-
-                state.errorMessage?.let {
-                    ErrorStrip(message = it)
+                item(key = "header") {
+                    HeaderBar(onRefresh = onRefresh)
                 }
 
-                BalanceCard(
-                    totalBalance = state.totalBalance,
-                    grantedBalance = "0.00",
-                    toppedUpBalance = "0.00",
-                    dailyCost = state.dailyCost,
-                    monthlyCost = state.monthlyCost,
-                    isLoading = false
-                )
-
-                if (state.providerStates.isNotEmpty()) {
-                    ProviderListCard(providerStates = state.providerStates)
+                if (state.errorMessage != null) {
+                    item(key = "error") {
+                        ErrorStrip(message = state.errorMessage)
+                    }
                 }
 
-                DailyBarChart(dailyData = state.dailyData)
-            }
-        }
-    }
-}
+                item(key = "balance") {
+                    BalanceCard(
+                        totalBalance = state.totalBalance,
+                        grantedBalance = state.grantedBalance,
+                        toppedUpBalance = state.toppedUpBalance,
+                        dailyCost = state.dailyCost,
+                        monthlyCost = state.monthlyCost,
+                        isLoading = false
+                    )
+                }
 
-@Composable
-private fun ProviderListCard(providerStates: List<ProviderUiState>) {
-    GlassPanel(modifier = Modifier.fillMaxWidth(), radius = 22) {
-        Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)) {
-            Text(
-                stringResource(R.string.providers_title),
-                color = Color(0xFF1A1A1A),
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold
-            )
-            Spacer(Modifier.height(8.dp))
-            providerStates.forEach { ps ->
-                ProviderRow(ps)
-                Spacer(Modifier.height(6.dp))
-            }
-        }
-    }
-}
+                item(key = "token_summary") {
+                    val maxTokens = maxOf(state.flashTokens, state.proTokens, 1L)
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        ModelTokenRow(
+                            modelName = "V4 Flash",
+                            tokens = state.flashTokens,
+                            progress = state.flashTokens.toFloat() / maxTokens,
+                            accent = Color(0xFF19C9FF)
+                        )
+                        ModelTokenRow(
+                            modelName = "V4 Pro",
+                            tokens = state.proTokens,
+                            progress = state.proTokens.toFloat() / maxTokens,
+                            accent = Color(0xFFB84DFF)
+                        )
+                    }
+                }
 
-@Composable
-private fun ProviderRow(ps: ProviderUiState) {
-    val typeLabel = when (ps.config.type) {
-        ProviderType.DEEPSEEK_OFFICIAL -> stringResource(R.string.provider_type_deepseek)
-        ProviderType.OPENAI_COMPATIBLE -> stringResource(R.string.provider_type_compatible)
-    }
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(modifier = Modifier.weight(1f)) {
-            Text(
-                ps.config.name,
-                color = Color(0xFF1A1A1A),
-                fontSize = 16.sp,
-                fontWeight = FontWeight.SemiBold
-            )
-            Text(
-                typeLabel,
-                color = Color(0xFF999999),
-                style = MaterialTheme.typography.bodySmall
-            )
-            ps.errorMessage?.let {
-                Text(
-                    it,
-                    color = Color(0xFFFF5252),
-                    style = MaterialTheme.typography.bodySmall,
-                    maxLines = 1
+                if (state.dailyRequests > 0 || state.monthlyRequests > 0) {
+                    item(key = "requests") {
+                        RequestCountSummary(
+                            dailyRequests = state.dailyRequests,
+                            monthlyRequests = state.monthlyRequests
+                        )
+                    }
+                }
+
+                item(key = "chart") {
+                    DailyBarChart(
+                        dailyData = state.dailyData,
+                        onBarTap = { date -> selectedDay = date }
+                    )
+                }
+            }
+
+            // 正在刷新时的轻量指示器
+            if (state.isRefreshing) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    RefreshAnimation(size = 36.dp, isAnimating = true)
+                }
+            }
+
+            // 弹窗：显示选中日期的模型明细
+            selectedDay?.let { date ->
+                val breakdownsForDay = remember(date, state.modelBreakdowns) {
+                    state.modelBreakdowns.filter { it.date == date }
+                }
+                DayModelBreakdownPopup(
+                    date = date,
+                    breakdowns = breakdownsForDay,
+                    onDismiss = { selectedDay = null }
                 )
             }
         }
-        Text(
-            "${ps.currencySymbol}${ps.balance}",
-            color = Color(0xFF1A1A1A),
-            fontSize = 18.sp,
-            fontWeight = FontWeight.Bold
-        )
     }
 }
 
@@ -270,6 +223,64 @@ private fun ErrorStrip(message: String) {
             .padding(14.dp)
     ) {
         Text(message, color = Color(0xFFFFD8D8), style = MaterialTheme.typography.bodyMedium)
+    }
+}
+
+@Composable
+private fun RequestCountSummary(
+    dailyRequests: Long,
+    monthlyRequests: Long
+) {
+    GlassPanel(modifier = Modifier.fillMaxWidth(), radius = 18) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 12.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                stringResource(R.string.request_title),
+                color = Color(0xFF666666),
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        stringResource(R.string.request_today),
+                        color = Color(0xFF999999),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        formatCompactNumber(dailyRequests),
+                        color = Color(0xFF1A1A1A),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        stringResource(R.string.request_month),
+                        color = Color(0xFF999999),
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                    Text(
+                        formatCompactNumber(monthlyRequests),
+                        color = Color(0xFF1A1A1A),
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+        }
+    }
+}
+
+private fun formatCompactNumber(n: Long): String {
+    return when {
+        n >= 1_000_000 -> String.format("%.1fM", n / 1_000_000.0)
+        n >= 1_000 -> String.format("%.1fK", n / 1_000.0)
+        else -> n.toString()
     }
 }
 

@@ -1,6 +1,7 @@
-﻿package com.deepseek.lzjc.ui.components
+package com.deepseek.lzjc.ui.components
 
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.CornerRadius
@@ -18,6 +20,7 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.nativeCanvas
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -29,9 +32,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun DailyBarChart(
     dailyData: List<DailyUsageSummary>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onBarTap: (String) -> Unit = {}
 ) {
-    val visibleData = rememberLastSevenDaysData(dailyData)
+    val visibleData = remember(dailyData) { rememberLastSevenDaysData(dailyData) }
     val total = visibleData.sumOf { it.totalTokens }
 
     GlassPanel(modifier = modifier.fillMaxWidth(), radius = 24) {
@@ -47,10 +51,35 @@ fun DailyBarChart(
             val labelColor = android.graphics.Color.argb(180, 100, 100, 100)
             val valueColor = android.graphics.Color.argb(210, 50, 50, 50)
 
+            // 缓存 Paint 对象，避免每帧重建
+            val valuePaint = remember {
+                android.graphics.Paint().apply {
+                    color = valueColor
+                    textSize = 28f
+                    textAlign = android.graphics.Paint.Align.CENTER
+                    isAntiAlias = true
+                }
+            }
+            val labelPaint = remember {
+                android.graphics.Paint().apply {
+                    color = labelColor
+                    textSize = 31f
+                    textAlign = android.graphics.Paint.Align.CENTER
+                    isAntiAlias = true
+                }
+            }
+
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(184.dp)
+                    .pointerInput(visibleData) {
+                        detectTapGestures { offset ->
+                            val slotWidth = size.width.toFloat() / visibleData.size
+                            val index = (offset.x / slotWidth).toInt().coerceIn(0, visibleData.size - 1)
+                            onBarTap(visibleData[index].date)
+                        }
+                    }
             ) {
                 val chartHeight = size.height - 54f
                 val slotWidth = size.width / visibleData.size
@@ -86,18 +115,6 @@ fun DailyBarChart(
                     )
 
                     drawContext.canvas.nativeCanvas.apply {
-                        val valuePaint = android.graphics.Paint().apply {
-                            color = valueColor
-                            textSize = 28f
-                            textAlign = android.graphics.Paint.Align.CENTER
-                            isAntiAlias = true
-                        }
-                        val labelPaint = android.graphics.Paint().apply {
-                            color = labelColor
-                            textSize = 31f
-                            textAlign = android.graphics.Paint.Align.CENTER
-                            isAntiAlias = true
-                        }
                         drawText(formatChartTokens(item.totalTokens), x + barWidth / 2, 28f, valuePaint)
                         val monthDay = item.date.takeLast(5).split("-")
                         drawText("${monthDay[0].toInt()}/${monthDay[1].toInt()}", x + barWidth / 2, size.height - 4f, labelPaint)

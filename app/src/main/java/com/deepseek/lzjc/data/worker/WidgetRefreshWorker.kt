@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.data.worker
+package com.deepseek.lzjc.data.worker
 
 import android.content.ComponentName
 import android.content.Context
@@ -33,16 +33,14 @@ class WidgetRefreshWorker @AssistedInject constructor(
             val today = dateFormat.format(System.currentTimeMillis())
             val month = monthFormat.format(System.currentTimeMillis())
 
-            // 刷新全部供应商余额，小组件展示汇总值
-            val results = repository.refreshAllProviders()
-            val totalBalance = results.values
-                .mapNotNull { it.getOrNull() }
-                .sumOf { it.totalBalance.toDoubleOrNull() ?: 0.0 }
-            val dailyCost = repository.getDailyCostAll(today)
-            val monthlyCost = repository.getMonthlyCostAll(month)
+            val balanceResult = repository.refreshAndRecord()
+            val totalBalance = balanceResult.getOrNull()
+                ?.balanceInfos?.firstOrNull()?.totalBalance ?: "0.00"
+            val dailyCost = repository.getDailyCost(today)
+            val monthlyCost = repository.getMonthlyCost(month)
 
             widgetDataCache.saveBalanceData(
-                totalBalance = String.format("%.2f", totalBalance),
+                totalBalance = totalBalance,
                 dailyCost = String.format("%.2f", dailyCost),
                 monthlyCost = String.format("%.2f", monthlyCost)
             )

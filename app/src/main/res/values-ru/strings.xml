@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeepSeek仪表盘</string>
+    <string name="app_name">SeekFlow</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">Обзор</string>
@@ -60,11 +60,31 @@
     <string name="trend_title">Тренд за 30 дней</string>
     <string name="trend_total">Итого ¥%s</string>
     <string name="trend_daily_avg">В среднем ¥%s</string>
-    <string name="trend_peak">Пик %1$s ¥%2$s</string>
+    <string name="trend_peak">Пик %s ¥%s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">Распределение по моделям</string>
     <string name="pie_no_data">Нет данных о потреблении</string>
+
+    <!-- Cache Hit Rate Card -->
+    <string name="cache_title">Кэш-попадания</string>
+    <string name="cache_hit_tokens">Попадание</string>
+    <string name="cache_miss_tokens">Промах</string>
+    <string name="cache_no_data">Нет данных кэша</string>
+    <string name="cache_rate_format">%s%%</string>
+    <string name="cache_saved">Экономия ~¥%s</string>
+
+    <!-- Request Count -->
+    <string name="request_title">Запросы API</string>
+    <string name="request_today">Сегодня</string>
+    <string name="request_month">Месяц</string>
+    <string name="request_count_format">%s раз</string>
+
+    <!-- Day Model Breakdown Popup -->
+    <string name="breakdown_cache_hit">Попадание кэша</string>
+    <string name="breakdown_cache_miss">Промах кэша</string>
+    <string name="breakdown_output">Выход</string>
+    <string name="breakdown_requests">Запросы</string>
 
     <!-- Widget -->
     <string name="widget_day_prefix">Д </string>

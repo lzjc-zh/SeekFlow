@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.data.api
+package com.deepseek.lzjc.data.api
 
 import retrofit2.http.GET
 import retrofit2.http.Header

@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">DeepSeek仪表盘</string>
+    <string name="app_name">SeekFlow</string>
 
     <!-- Tab bar -->
     <string name="tab_overview">概要</string>
@@ -60,11 +60,31 @@
     <string name="trend_title">30日トレンド</string>
     <string name="trend_total">合計 ¥%s</string>
     <string name="trend_daily_avg">1日平均 ¥%s</string>
-    <string name="trend_peak">最高 %1$s ¥%2$s</string>
+    <string name="trend_peak">最高 %s ¥%s</string>
 
     <!-- Model Pie Chart -->
     <string name="pie_title">モデル比率</string>
     <string name="pie_no_data">消費データがありません</string>
+
+    <!-- Cache Hit Rate Card -->
+    <string name="cache_title">キャッシュヒット率</string>
+    <string name="cache_hit_tokens">ヒット</string>
+    <string name="cache_miss_tokens">ミス</string>
+    <string name="cache_no_data">キャッシュデータがありません</string>
+    <string name="cache_rate_format">%s%%</string>
+    <string name="cache_saved">約 ¥%s 節約</string>
+
+    <!-- Request Count -->
+    <string name="request_title">APIリクエスト数</string>
+    <string name="request_today">今日</string>
+    <string name="request_month">今月</string>
+    <string name="request_count_format">%s 回</string>
+
+    <!-- Day Model Breakdown Popup -->
+    <string name="breakdown_cache_hit">キャッシュヒット</string>
+    <string name="breakdown_cache_miss">キャッシュミス</string>
+    <string name="breakdown_output">出力</string>
+    <string name="breakdown_requests">リクエスト</string>
 
     <!-- Widget -->
     <string name="widget_day_prefix">日 </string>

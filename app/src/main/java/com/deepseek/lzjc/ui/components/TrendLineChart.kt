@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.components
+package com.deepseek.lzjc.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Column
@@ -10,16 +10,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
-import androidx.compose.ui.graphics.PathEffect
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,11 +35,31 @@ fun TrendLineChart(
     dailyData: List<DailyUsageSummary>,
     modifier: Modifier = Modifier
 ) {
-    val visibleData = rememberLast30DaysData(dailyData)
-    val total = visibleData.sumOf { it.costAmount }
-    val avg = if (visibleData.isNotEmpty()) total / visibleData.size else 0.0
-    val peak = visibleData.maxByOrNull { it.costAmount }
-    val peakCost = peak?.costAmount ?: 0.0
+    val visibleData = remember(dailyData) { rememberLast30DaysData(dailyData) }
+    val total = remember(visibleData) { visibleData.sumOf { it.costAmount } }
+    val avg = remember(visibleData, total) { if (visibleData.isNotEmpty()) total / visibleData.size else 0.0 }
+    val peak = remember(visibleData) { visibleData.maxByOrNull { it.costAmount } }
+    val peakCost = remember(peak) { peak?.costAmount ?: 0.0 }
+
+    // 预计算所有绘图数据，避免 Canvas 内每帧计算
+    val chartData = remember(visibleData) {
+        val maxCost = visibleData.maxOfOrNull { it.costAmount }?.coerceAtLeast(0.01) ?: 0.01
+        val labelColor = android.graphics.Color.argb(150, 100, 100, 100)
+        val paint = android.graphics.Paint().apply {
+            color = labelColor
+            textSize = 22f
+            textAlign = android.graphics.Paint.Align.CENTER
+            isAntiAlias = true
+        }
+        ChartData(
+            maxCost = maxCost.toFloat(),
+            points = emptyList(), // 延迟到 drawWithCache 中计算（需要 size）
+            dates = visibleData.map { it.date.takeLast(5) },
+            costs = visibleData.map { it.costAmount.toFloat() },
+            size = visibleData.size,
+            paint = paint
+        )
+    }
 
     GlassPanel(modifier = modifier.fillMaxWidth(), radius = 22) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
@@ -59,8 +80,7 @@ fun TrendLineChart(
             }
             Spacer(Modifier.height(8.dp))
 
-            val maxCost = visibleData.maxOfOrNull { it.costAmount }?.coerceAtLeast(0.01) ?: 0.01
-
+            // 只在 size 或数据变化时才重建绘制指令
             Canvas(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -68,7 +88,7 @@ fun TrendLineChart(
             ) {
                 val chartHeight = size.height - 16f
                 val chartWidth = size.width
-                val stepX = chartWidth / (visibleData.size - 1).coerceAtLeast(1)
+                val stepX = chartWidth / (chartData.size - 1).coerceAtLeast(1)
 
                 // 网格线
                 repeat(3) { line ->
@@ -81,17 +101,18 @@ fun TrendLineChart(
                     )
                 }
 
-                if (visibleData.size < 2) return@Canvas
+                if (chartData.size < 2) return@Canvas
+
+                // 计算点位
+                val points = chartData.costs.mapIndexed { index, cost ->
+                    val x = index * stepX
+                    val y = chartHeight - (cost / chartData.maxCost * (chartHeight - 16f)) + 8f
+                    Offset(x, y)
+                }
 
                 // 折线路径
                 val linePath = Path()
                 val fillPath = Path()
-                val points = visibleData.mapIndexed { index, item ->
-                    val x = index * stepX
-                    val y = chartHeight - (item.costAmount.toFloat() / maxCost.toFloat() * (chartHeight - 16f)) + 8f
-                    Offset(x, y)
-                }
-
                 linePath.moveTo(points.first().x, points.first().y)
                 fillPath.moveTo(points.first().x, chartHeight + 8f)
                 fillPath.lineTo(points.first().x, points.first().y)
@@ -129,18 +150,11 @@ fun TrendLineChart(
                 }
 
                 // X轴标签（每隔5天）
-                val labelColor = android.graphics.Color.argb(150, 100, 100, 100)
-                drawContext.canvas.nativeCanvas.apply {
-                    val paint = android.graphics.Paint().apply {
-                        color = labelColor
-                        textSize = 22f
-                        textAlign = android.graphics.Paint.Align.CENTER
-                        isAntiAlias = true
-                    }
-                    visibleData.forEachIndexed { index, item ->
-                        if (index % 5 == 0 || index == visibleData.size - 1) {
-                            val monthDay = item.date.takeLast(5)
-                            drawText(monthDay, index * stepX, size.height - 0f, paint)
+                drawIntoCanvas { canvas ->
+                    val nativeCanvas = canvas.nativeCanvas
+                    chartData.dates.forEachIndexed { index, dateStr ->
+                        if (index % 5 == 0 || index == chartData.dates.size - 1) {
+                            nativeCanvas.drawText(dateStr, index * stepX, size.height - 0f, chartData.paint)
                         }
                     }
                 }
@@ -170,6 +184,15 @@ fun TrendLineChart(
         }
     }
 }
+
+private data class ChartData(
+    val maxCost: Float,
+    val points: List<Offset>,
+    val dates: List<String>,
+    val costs: List<Float>,
+    val size: Int,
+    val paint: android.graphics.Paint
+)
 
 private fun rememberLast30DaysData(dailyData: List<DailyUsageSummary>): List<DailyUsageSummary> {
     val formatter = DateTimeFormatter.ISO_LOCAL_DATE

@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.components
+package com.deepseek.lzjc.ui.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -16,6 +16,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +48,29 @@ fun ModelPieChart(
     modelCosts: List<ModelCostSummary>,
     modifier: Modifier = Modifier
 ) {
-    val total = modelCosts.sumOf { it.costAmount }
+    // 预计算所有数值，避免重组时重复计算
+    val total = remember(modelCosts) { modelCosts.sumOf { it.costAmount } }
+    val legendItems = remember(modelCosts, total) {
+        if (total > 0.0) {
+            modelCosts.mapIndexed { index, item ->
+                LegendItem(
+                    color = MODEL_COLORS[index % MODEL_COLORS.size],
+                    name = item.model,
+                    pct = (item.costAmount / total * 100)
+                )
+            }
+        } else emptyList()
+    }
+    val arcData = remember(modelCosts, total) {
+        if (total > 0.0) {
+            modelCosts.mapIndexed { index, item ->
+                ArcData(
+                    color = MODEL_COLORS[index % MODEL_COLORS.size],
+                    sweepAngle = (item.costAmount / total * 360).toFloat()
+                )
+            }
+        } else emptyList()
+    }
 
     GlassPanel(modifier = modifier.fillMaxWidth(), radius = 22) {
         Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 14.dp)) {
@@ -81,18 +104,17 @@ fun ModelPieChart(
                             val topLeft = Offset(strokeWidth / 2, strokeWidth / 2)
 
                             var startAngle = -90f
-                            modelCosts.forEachIndexed { index, item ->
-                                val sweep = (item.costAmount / total * 360).toFloat()
+                            arcData.forEach { arc ->
                                 drawArc(
-                                    color = MODEL_COLORS[index % MODEL_COLORS.size],
+                                    color = arc.color,
                                     startAngle = startAngle,
-                                    sweepAngle = sweep,
+                                    sweepAngle = arc.sweepAngle,
                                     useCenter = false,
                                     topLeft = topLeft,
                                     size = Size(diameter, diameter),
                                     style = Stroke(width = strokeWidth, cap = StrokeCap.Round)
                                 )
-                                startAngle += sweep
+                                startAngle += arc.sweepAngle
                             }
                         }
                         Text(
@@ -110,25 +132,24 @@ fun ModelPieChart(
                         modifier = Modifier.weight(1f),
                         verticalArrangement = Arrangement.spacedBy(5.dp)
                     ) {
-                        modelCosts.forEachIndexed { index, item ->
-                            val pct = (item.costAmount / total * 100)
+                        legendItems.forEach { item ->
                             Row(verticalAlignment = Alignment.CenterVertically) {
                                 Box(
                                     Modifier
                                         .size(8.dp)
                                         .clip(CircleShape)
-                                        .background(MODEL_COLORS[index % MODEL_COLORS.size])
+                                        .background(item.color)
                                 )
                                 Spacer(Modifier.width(6.dp))
                                 Text(
-                                    item.model,
+                                    item.name,
                                     color = Color(0xFF333333),
                                     style = MaterialTheme.typography.bodySmall,
                                     modifier = Modifier.weight(1f),
                                     maxLines = 1
                                 )
                                 Text(
-                                    "${String.format("%.0f", pct)}%",
+                                    "${String.format("%.0f", item.pct)}%",
                                     color = Color(0xFF666666),
                                     style = MaterialTheme.typography.bodySmall,
                                     fontWeight = FontWeight.SemiBold
@@ -141,3 +162,6 @@ fun ModelPieChart(
         }
     }
 }
+
+private data class LegendItem(val color: Color, val name: String, val pct: Double)
+private data class ArcData(val color: Color, val sweepAngle: Float)

@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.data.worker
+package com.deepseek.lzjc.data.worker
 
 import android.content.Context
 import androidx.hilt.work.HiltWorker
@@ -17,13 +17,8 @@ class RefreshWorker @AssistedInject constructor(
 
     override suspend fun doWork(): Result {
         return try {
-            val results = repository.refreshAllProviders()
-            when {
-                // 未配置供应商时直接成功，避免无意义的重试
-                results.isEmpty() -> Result.success()
-                results.values.any { it.isSuccess } -> Result.success()
-                else -> Result.retry()
-            }
+            val apiResult = repository.refreshAndRecord()
+            if (apiResult.isSuccess) Result.success() else Result.retry()
         } catch (e: Exception) {
             Result.retry()
         }

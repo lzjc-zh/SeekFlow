@@ -1,4 +1,4 @@
-﻿package com.deepseek.lzjc.ui.components
+package com.deepseek.lzjc.ui.components
 
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
